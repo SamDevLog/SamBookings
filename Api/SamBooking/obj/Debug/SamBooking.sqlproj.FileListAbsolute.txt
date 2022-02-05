@@ -1,0 +1,12 @@
+d:\DOTNET Projects\Mustapha\Api\SamBooking\bin\Debug\SamBooking.dacpac
+d:\DOTNET Projects\Mustapha\Api\SamBooking\bin\Debug\SamBooking.dll
+d:\DOTNET Projects\Mustapha\Api\SamBooking\bin\Debug\SamBooking.pdb
+d:\DOTNET Projects\Mustapha\Api\SamBooking\bin\Debug\msdb.dacpac
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\SamBooking.sqlproj.AssemblyReference.cache
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\Model.xml
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\refactor.xml
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\postdeploy.sql
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\predeploy.sql
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\SamBooking.sqlproj.CopyComplete
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\SamBooking.dll
+d:\DOTNET Projects\Mustapha\Api\SamBooking\obj\Debug\SamBooking.pdb
