@@ -36,7 +36,9 @@ namespace Dal.Migrations
                     RoomNumber = table.Column<int>(type: "INTEGER", nullable: false),
                     Surface = table.Column<double>(type: "REAL", nullable: false),
                     NeedsRepair = table.Column<bool>(type: "INTEGER", nullable: false),
-                    HotelId = table.Column<int>(type: "INTEGER", nullable: true)
+                    BusyFrom = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    BusyTo = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    HotelId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,7 +47,8 @@ namespace Dal.Migrations
                         name: "FK_Rooms_Hotels_HotelId",
                         column: x => x.HotelId,
                         principalTable: "Hotels",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,13 +58,20 @@ namespace Dal.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     RoomId = table.Column<int>(type: "INTEGER", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "TEXT", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    HotelId = table.Column<int>(type: "INTEGER", nullable: false),
+                    CheckInDate = table.Column<DateTime>(type: "TEXT", nullable: true),
+                    CheckOutDate = table.Column<DateTime>(type: "TEXT", nullable: true),
                     Customer = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Reservations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reservations_Hotels_HotelId",
+                        column: x => x.HotelId,
+                        principalTable: "Hotels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Reservations_Rooms_RoomId",
                         column: x => x.RoomId,
@@ -69,6 +79,11 @@ namespace Dal.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reservations_HotelId",
+                table: "Reservations",
+                column: "HotelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_RoomId",

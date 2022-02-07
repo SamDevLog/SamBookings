@@ -37,7 +37,10 @@ namespace Services.Services
 
             if(room is null) return null;
 
-            var isBusy = reservation.CheckInDate >= room.BusyFrom.Value && reservation.CheckInDate <= room.BusyTo.Value;
+            var roomBusyFrom = room.BusyFrom == null ? default(DateTime) : room.BusyFrom;
+            var roomBusyTo = room.BusyTo == null ? default(DateTime) : room.BusyTo;
+
+            var isBusy = reservation.CheckInDate > roomBusyFrom && reservation.CheckInDate < roomBusyTo;
 
             if(isBusy && room.NeedsRepair) return null;
 
