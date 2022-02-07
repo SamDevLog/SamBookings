@@ -6,46 +6,52 @@ using Dal;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Services
 {
     public class ReservationService : IReservationService
     {
         private readonly IHotelsRepository hotelsRepo;
+        private readonly IReservationsRepository reservationsRepository;
         private readonly DataContext ctx;
 
-        public ReservationService(IHotelsRepository hotelsRepo, DataContext ctx)
+        public ReservationService(IHotelsRepository hotelsRepo, IReservationsRepository reservationsRepository, DataContext ctx)
         {
             this.hotelsRepo = hotelsRepo;
+            this.reservationsRepository = reservationsRepository;
             this.ctx = ctx;
+        }
+
+        public async Task<Reservation> CancelReservationAsync(int id)
+        {
+            var reservation = await reservationsRepository.GetReservationByIdAsync(id);
+
+            if(reservation is not null) ctx.Reservations.Remove(reservation);
+
+            await ctx.SaveChangesAsync();
+
+            return reservation;
         }
 
         public async Task<Reservation> MakeReservationAsync(Reservation reservation)
         {
-            // var reservation = new Reservation
-            // {
-            //     HotelId = hotelId,
-            //     RoomId = roomId,
-            //     Customer = customer,
-            //     CheckInDate = checkIn,
-            //     CheckOutDate = checkOut
-            // };
-
             var hotel = await hotelsRepo.GetHotelByIdAsync(reservation.HotelId);
 
-            var room = hotel.Rooms.Where(r => r.Id == reservation.RoomId).FirstOrDefault();
+            if(hotel is null) return null;
 
+            var room = hotel.Rooms.Where(r => r.Id == reservation.RoomId).FirstOrDefault();
+            
             if(room is null) return null;
 
-            var roomBusyFrom = room.BusyFrom == null ? default(DateTime) : room.BusyFrom;
-            var roomBusyTo = room.BusyTo == null ? default(DateTime) : room.BusyTo;
+            bool isBusy = await ctx.Reservations.AnyAsync(dbRes => 
+                (reservation.CheckInDate >= dbRes.CheckInDate && reservation.CheckInDate <= dbRes.CheckOutDate)
+                && (reservation.CheckOutDate >= dbRes.CheckInDate && reservation.CheckOutDate <= dbRes.CheckOutDate)
+            );
 
-            var isBusy = reservation.CheckInDate > roomBusyFrom && reservation.CheckInDate < roomBusyTo;
+            if(isBusy) return null;
 
-            if(isBusy && room.NeedsRepair) return null;
-
-            room.BusyFrom = reservation.CheckInDate;
-            room.BusyTo = reservation.CheckOutDate;
+            if(room.NeedsRepair) return null;
 
             ctx.Rooms.Update(room);
             ctx.Reservations.Add(reservation);

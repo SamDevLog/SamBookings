@@ -1,12 +1,22 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Api.Dtos
 {
     public class HotelCreateDto
     {
-        public string Name { get; set; } = string.Empty;
+        [Required]
+        [StringLength(50)]
+        [MinLength(2)]
+        public string Name { get; set; }
+        [Required]
+        [Range(1,5)]
         public int Stars { get; set; }
-        public string Address { get; set; } = string.Empty;
-        public string City { get; set; } = string.Empty;
-        public string Country { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        [Required]
+        public string Address { get; set; }
+        [Required]
+        public string City { get; set; }
+        [Required]
+        public string Country { get; set; }
+        public string Description { get; set; }
     }
 }

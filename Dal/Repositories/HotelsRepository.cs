@@ -11,9 +11,12 @@ namespace Dal.Repositories
     public class HotelsRepository : IHotelsRepository
     {
         private readonly DataContext _ctx;
-        public HotelsRepository(DataContext ctx)
+        private readonly IRoomsRepository roomsRepository;
+
+        public HotelsRepository(DataContext ctx, IRoomsRepository roomsRepository)
         {
-            _ctx = ctx;            
+            _ctx = ctx;
+            this.roomsRepository = roomsRepository;
         }
         public async Task<Hotel> CreateHotelAsync(Hotel hotel)
         {
@@ -45,7 +48,8 @@ namespace Dal.Repositories
 
         public async Task<Room> DeleteHotelRoomAsync(int hotelId, int roomId)
         {
-            var room = await _ctx.Rooms.SingleOrDefaultAsync(r => r.Id == roomId && r.HotelId == hotelId);
+            var room = await roomsRepository.GetRoomByIdAndHotelIdAsync(hotelId, roomId);
+            
 
             if(room is null) return null;
 
@@ -53,11 +57,6 @@ namespace Dal.Repositories
             await _ctx.SaveChangesAsync();
 
             return room;
-        }
-
-        public async Task<List<Room>> GetAllHotelRoomsAsync(int hotelId)
-        {
-            return await _ctx.Rooms.Where(r => r.HotelId == hotelId).ToListAsync();
         }
 
         public async Task<List<Hotel>> GetAllHotelsAsync()
@@ -76,15 +75,6 @@ namespace Dal.Repositories
 
             return hotel;
 
-        }
-
-        public async Task<Room> GetHotelRoomByIdAsync(int hotelId, int roomId)
-        {
-            var room = await _ctx.Rooms.FirstOrDefaultAsync(r => r.HotelId == hotelId && r.Id == roomId);
-
-            if(room is null) return null;
-
-            return room;
         }
 
         public async Task<Hotel> UpdateHotelAsync(Hotel updatedHotel)

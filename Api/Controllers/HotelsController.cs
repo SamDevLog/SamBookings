@@ -17,11 +17,13 @@ namespace Api.Controllers
     public class HotelsController : ControllerBase
     {
         private readonly IHotelsRepository hotelsRepo;
+        private readonly IRoomsRepository roomsRepository;
         private readonly IMapper mapper;
 
-        public HotelsController(IHotelsRepository hotelsRepo, IMapper mapper)
+        public HotelsController(IHotelsRepository hotelsRepo, IRoomsRepository roomsRepository, IMapper mapper)
         {
             this.hotelsRepo = hotelsRepo;
+            this.roomsRepository = roomsRepository;
             this.mapper = mapper;
         }
 
@@ -82,7 +84,7 @@ namespace Api.Controllers
         [HttpGet("{hotelId}/rooms")]
         public async Task<IActionResult> GetAllHotelRooms(int hotelId)
         {
-            var rooms = await hotelsRepo.GetAllHotelRoomsAsync(hotelId);
+            var rooms = await roomsRepository.GetRoomsByHotelIdAsync(hotelId);
             var mappedRooms = mapper.Map<List<RoomGetDto>>(rooms);
 
             return Ok(mappedRooms);
@@ -91,7 +93,7 @@ namespace Api.Controllers
         [HttpGet("{hotelId}/rooms/{roomId}")]
         public async Task<IActionResult> GetHotelRoomById(int hotelId, int roomId){
 
-            var room = await hotelsRepo.GetHotelRoomByIdAsync(hotelId, roomId);
+            var room = await roomsRepository.GetRoomByIdAndHotelIdAsync(hotelId, roomId);
 
             if(room is null) return NotFound("This room was not found!");
             
@@ -104,7 +106,6 @@ namespace Api.Controllers
         public async Task<IActionResult> AddHotelRoom([FromBody] RoomPostDto newRoom, int hotelId){
 
             var room = mapper.Map<Room>(newRoom);
-            // room.HotelId = hotelId;
 
             await hotelsRepo.CreateHotelRoomAsync(hotelId, room);
             var mappedRoom = mapper.Map<RoomGetDto>(room);

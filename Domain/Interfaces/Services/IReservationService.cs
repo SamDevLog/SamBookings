@@ -9,5 +9,9 @@ namespace Domain.Interfaces.Services
     public interface IReservationService
     {
         Task<Reservation> MakeReservationAsync(Reservation reservation);
+        // Task<List<Reservation>> GetAllReservationsAsync();
+        // Task<Reservation> GetReservationByIdAsync(int id);
+        // Task<List<Reservation>> GetRoomReservationsAsync(int hotelId, int roomId);
+        Task<Reservation> CancelReservationAsync(int id);
     }
 }

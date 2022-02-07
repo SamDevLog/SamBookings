@@ -13,7 +13,7 @@ namespace Api.Automapper
         public ReservationMappingProfiles()
         {
             CreateMap<ReservationPostDto, Reservation>();
-            
+            CreateMap<Reservation, ReservationGetDto>();            
         }
     }
 }

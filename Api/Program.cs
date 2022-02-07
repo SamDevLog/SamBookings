@@ -19,6 +19,8 @@ builder.Services.AddDbContext<DataContext>(options => {
 });
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
+builder.Services.AddScoped<IRoomsRepository, RoomsRepository>();
+builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
 var app = builder.Build();
