@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos;
+using Api.Errors;
 using AutoMapper;
 using Dal;
 using Domain.Interfaces.Repositories;
@@ -31,9 +32,9 @@ namespace Api.Controllers
         public async Task<IActionResult> GetAllHotels(){
             
             var hotels = await hotelsRepo.GetAllHotelsAsync();
+
             var hotelsGet = mapper.Map<List<HotelGetDto>>(hotels);
             
-
             return Ok(hotelsGet);
         }
 
@@ -41,7 +42,7 @@ namespace Api.Controllers
         public async Task<IActionResult> GetHotelById(int id){
             var hotel = await hotelsRepo.GetHotelByIdAsync(id);
 
-            if(hotel is null) return NotFound("Hotel was not found!");
+            if(hotel is null) return NotFound(new ApiResponse(404));
 
             var hotelGet = mapper.Map<HotelGetDto>(hotel);
 
@@ -76,7 +77,7 @@ namespace Api.Controllers
         {
             var hotel = await hotelsRepo.DeleteHotelAsync(id);
             
-            if(hotel is null) return NotFound("Hotel was not found");
+            if(hotel is null) return NotFound(new ApiResponse(404));
             
             return NoContent();
         }
@@ -95,7 +96,7 @@ namespace Api.Controllers
 
             var room = await roomsRepository.GetRoomByIdAndHotelIdAsync(hotelId, roomId);
 
-            if(room is null) return NotFound("This room was not found!");
+            if(room is null) return NotFound(new ApiResponse(404));
             
             var mappedRoom = mapper.Map<RoomGetDto>(room);
 
@@ -130,7 +131,7 @@ namespace Api.Controllers
         {
             var room = await hotelsRepo.DeleteHotelRoomAsync(hotelId, roomId);
 
-            if(room is null) return NotFound("Room was not found");
+            if(room is null) return NotFound(new ApiResponse(404));
 
             return NoContent();
         }

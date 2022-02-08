@@ -9,12 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddDbContext<DataContext>(options => {
     options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"));
 });
-builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddApplicationServices();
+
 builder.Services.AddCors(opt => {
     opt.AddPolicy("CorsPolicy", policy => {
         policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
@@ -35,6 +37,8 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
+
+app.UseCors ("CorsPolicy");
 
 app.UseAuthorization();
 

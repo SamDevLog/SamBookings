@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Api.Dtos;
+using Api.Errors;
 using AutoMapper;
 using Domain.Interfaces.Repositories;
 using Domain.Interfaces.Services;
@@ -33,7 +34,7 @@ namespace Api.Controllers
 
             var reservationResponse = await reservationService.MakeReservationAsync(reservation);
 
-            if(reservationResponse is null) return BadRequest("This reservation cannot be made!");
+            if(reservationResponse is null) return BadRequest(new ApiResponse(400));
 
             var mappedReservationResponse = _mapper.Map<ReservationGetDto>(reservationResponse);
 
@@ -54,7 +55,7 @@ namespace Api.Controllers
         {
             var reservation = await reservationsRepository.GetReservationByIdAsync(id);
 
-            if(reservation is null) return NotFound("No reservation was found!");
+            if(reservation is null) return NotFound(new ApiResponse(404));
 
             var mappedReservation = _mapper.Map<ReservationGetDto>(reservation);
 
@@ -85,7 +86,7 @@ namespace Api.Controllers
         {
             var reservation = await reservationService.CancelReservationAsync(id);
             
-            if(reservation is null) return NotFound("Coud not cancel reservation!");
+            if(reservation is null) return NotFound(new ApiResponse(404));
 
             return NoContent();
         }
