@@ -1,27 +1,25 @@
-using Api;
+using Api.Extensions;
 using Api.Middlewares;
 using Dal;
-using Dal.Repositories;
-using Domain.Interfaces.Repositories;
-using Domain.Interfaces.Services;
 using Microsoft.EntityFrameworkCore;
-using Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(options => {
     options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"));
 });
 builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<IHotelsRepository, HotelsRepository>();
-builder.Services.AddScoped<IRoomsRepository, RoomsRepository>();
-builder.Services.AddScoped<IReservationsRepository, ReservationsRepository>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
+
+builder.Services.AddApplicationServices();
+builder.Services.AddCors(opt => {
+    opt.AddPolicy("CorsPolicy", policy => {
+        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+    });
+});
 
 var app = builder.Build();
 
@@ -31,6 +29,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 

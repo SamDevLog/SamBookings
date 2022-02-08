@@ -13,13 +13,13 @@ namespace Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ReservationController : ControllerBase
+    public class ReservationsController : ControllerBase
     {
         private readonly IReservationService reservationService;
         private readonly IReservationsRepository reservationsRepository;
         private readonly IMapper _mapper;
 
-        public ReservationController(IReservationService reservationService, IReservationsRepository reservationsRepository, IMapper mapper)
+        public ReservationsController(IReservationService reservationService, IReservationsRepository reservationsRepository, IMapper mapper)
         {
             _mapper = mapper;
             this.reservationService = reservationService;
